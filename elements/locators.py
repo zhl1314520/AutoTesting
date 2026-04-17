@@ -3,9 +3,12 @@ import time
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support import expected_conditions
 
+"""
 
+定位元素
+"""
 # =====================
 # 全局慢速模式开关
 # =====================
@@ -38,7 +41,7 @@ URL = "file:///D:/Desktop/4.html"
 # =====================
 def wait_element(driver, by, value, timeout=5):
     element = WebDriverWait(driver, timeout).until(
-        EC.presence_of_element_located((by, value))
+        expected_conditions.presence_of_element_located((by, value))
     )
     pause()
     return element
@@ -46,7 +49,7 @@ def wait_element(driver, by, value, timeout=5):
 
 def wait_elements(driver, by, value, timeout=5):
     elements = WebDriverWait(driver, timeout).until(
-        EC.presence_of_all_elements_located((by, value))
+        expected_conditions.presence_of_all_elements_located((by, value))
     )
     pause()
     return elements
@@ -151,3 +154,15 @@ def test_input_update(driver):
     pause(2)
 
     assert element.get_attribute("value") == "Eric"
+
+def test_click_button(driver):
+    driver.get("file:///D:/Desktop/1.html")
+
+    button = wait_element(driver, By.CLASS_NAME, "clickable-card")
+    i = 0
+    while True:
+        button.click()
+        pause(0.1)
+        if i == 100:
+            break
+        i += 1
