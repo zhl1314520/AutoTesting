@@ -9,7 +9,7 @@ from selenium.webdriver.remote.client_config import ClientConfig
 
 """
 
-这段代码是 Selenium 远程执行（Remote WebDriver / Grid）+ 客户端网络配置（ClientConfig） 的进阶用法
+这段代码是 sel_tests 远程执行（Remote WebDriver / Grid）+ 客户端网络配置（ClientConfig） 的进阶用法
 """
 
 
@@ -19,7 +19,7 @@ def test_start_remote_with_client_config(grid_server):
     retries = Retry(connect=2, read=2, redirect=2)
     timeout = Timeout(connect=300, read=3600)
 
-    # Selenium 客户端（Python → Grid）之间的 HTTP 通信行为, 不是浏览器行为
+    # sel_tests 客户端（Python → Grid）之间的 HTTP 通信行为, 不是浏览器行为
     client_config = ClientConfig(remote_server_addr=grid_server,
                                  proxy=proxy,
                                  init_args_for_pool_manager={

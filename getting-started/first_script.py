@@ -17,7 +17,7 @@ text_box = driver.find_element(by=By.NAME, value="my-text")
 # 这会找到页面上第一个 <button> 标签
 submit_button = driver.find_element(by=By.CSS_SELECTOR, value="button")
 
-text_box.send_keys("Selenium")  # 模拟输入 "Selenium"
+text_box.send_keys("sel_tests")  # 模拟输入 "sel_tests"
 submit_button.click()           # 模拟点击
 
 # 找到 ID 为 "message" 的元素（通常是显示结果的区域）

@@ -4,7 +4,7 @@ from selenium.webdriver.common.proxy import ProxyType
 
 """
 
-这些函数主要测试和演示 Selenium WebDriver 的各种 浏览器配置选项
+这些函数主要测试和演示 sel_tests WebDriver 的各种 浏览器配置选项
 """
 
 # 页面加载策略(normal)

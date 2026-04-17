@@ -14,8 +14,8 @@ def test_eight_components():
     text_box = driver.find_element(by=By.NAME, value="my-text") # 获取 name = ”my-text“
     submit_button = driver.find_element(by=By.CSS_SELECTOR, value="button")
 
-    text_box.send_keys("Selenium")
-    print("已输入 'Selenium'")
+    text_box.send_keys("selenium")  # 模拟输入 "selenium"
+    print("已输入 'sel_tests'")
     time.sleep(2)
     submit_button.click()
     print("已点击提交按钮")
@@ -41,6 +41,3 @@ def setup():
 def teardown(driver):
     driver.quit()
 
-
-if __name__ == "__main__":
-    test_eight_components()

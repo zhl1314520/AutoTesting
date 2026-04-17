@@ -6,7 +6,7 @@ from selenium.webdriver.support.wait import WebDriverWait
 
 """
 
-这段代码讲的是 Selenium 三种等待机制（不等待 / sleep / 隐式等待 / 显式等待）
+这段代码讲的是 sel_tests 三种等待机制（不等待 / sleep / 隐式等待 / 显式等待）
 
 Web 页面是“动态的”，元素不会立刻出现，所以必须“等”
 """

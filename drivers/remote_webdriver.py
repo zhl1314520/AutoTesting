@@ -24,7 +24,7 @@ def test_uploads(server):
 
     driver.get("https://the-internet.herokuapp.com/upload")
     upload_file = os.path.abspath(
-        os.path.join(os.path.dirname(__file__), "..", "selenium-snapshot.png"))
+        os.path.join(os.path.dirname(__file__), "..", "sel_tests-snapshot.png"))
 
     driver.file_detector = LocalFileDetector()
     file_input = driver.find_element(By.CSS_SELECTOR, "input[type='file']")
@@ -34,7 +34,7 @@ def test_uploads(server):
     file_name_element = driver.find_element(By.ID, "uploaded-files")
     file_name = file_name_element.text
 
-    assert file_name == "selenium-snapshot.png"
+    assert file_name == "sel_tests-snapshot.png"
 
 
 @pytest.mark.skipif(sys.platform == "win32", reason="如果是 Window, 则会卡住，无法继续执行测试")
