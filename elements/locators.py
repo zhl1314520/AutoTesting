@@ -1,3 +1,5 @@
+from datetime import datetime
+
 import pytest
 import time
 from selenium import webdriver
@@ -156,13 +158,23 @@ def test_input_update(driver):
     assert element.get_attribute("value") == "Eric"
 
 def test_click_button(driver):
-    driver.get("file:///D:/Desktop/1.html")
+    # 设置开始点击的时间
+    start_time = datetime(2026, 4, 19, 13, 59, 0)
+    # 设置结束点击的时间
+    end_time = datetime(2026, 4, 19, 14, 0, 0)
+    # driver.get("file:///D:/Desktop/1.html")
+    driver.get("http://localhost:5173/login")
 
-    button = wait_element(driver, By.CLASS_NAME, "clickable-card")
-    i = 0
-    while True:
-        button.click()
-        pause(0.1)
-        if i == 100:
+    while datetime.now() < start_time:
+        try:
+            # 每次点击前重新查找元素（因为页面刷新后元素会失效）
+            button = wait_element(driver, By.CLASS_NAME, "logo-link")
+            button.click()
+            pause(1)
+        except Exception as e:
+            print(f"点击失败：{e}")
+            pause(1)
+            # 页面刷新后重新加载
+            driver.get("http://localhost:5173/login")
+        if datetime.now() > end_time:
             break
-        i += 1
