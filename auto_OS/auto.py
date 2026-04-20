@@ -6,12 +6,14 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
 # =====================
-# 全局 driver fixture
+# 全局 driver fixture（夹具）：统一管理浏览器的创建和销毁
 # =====================
-@pytest.fixture
+@pytest.fixture(scope="session")    # 整个测试会话只创建一个 driver 实例，所有测试用例共享这个实例，最后在测试结束时关闭浏览器
 def driver():
-    driver = webdriver.Chrome()
-    yield driver
+    options = webdriver.ChromeOptions() # 创建浏览器配置
+    options.page_load_strategy = "eager"    # eager：页面 DOM 加载完成就继续执行
+    driver = webdriver.Chrome(options=options)
+    yield driver    # 把 driver 交给测试用例使用
     driver.quit()
 
 # =====================
@@ -31,6 +33,10 @@ def login_case(driver):
     driver.get("http://localhost:5173/login")
 
     wait = WebDriverWait(driver, 10)
+
+    # 如果已经在 dashboard，说明已经登录
+    if "dashboard" in driver.current_url:
+        return
 
     email_input = driver.find_element(By.ID, "email")
     password_input = driver.find_element(By.ID, "password")
@@ -55,6 +61,7 @@ def login_case(driver):
     # ("taylor@163.com", "12345678"),
     # ("eric@163.com", "1234567890"),
 ])
+@pytest.mark.smoke  # 使用：pytest -m smoke 来运行这个测试用例
 def test_login(driver, email, password):
     driver.get("http://localhost:5173/login")
 
@@ -77,6 +84,7 @@ def test_login(driver, email, password):
     assert "dashboard" in driver.current_url, "应该跳转到 ./dashboard 页面"
 
 # 概览-数据洞察-刷新按钮
+@pytest.mark.smoke
 def test_button_refresh(driver):
     login_case(driver)
     driver.get("http://localhost:5173/dashboard")
@@ -97,6 +105,7 @@ def test_button_refresh(driver):
     assert "spinning" in refresh_btn.get_attribute("class"), "应显示刷新动画"
 
 # 概览-数据洞察-卡片按钮
+@pytest.mark.smoke
 def test_button_projects(driver):
     login_case(driver)
     driver.get("http://localhost:5173/dashboard")
@@ -131,6 +140,7 @@ def test_button_projects(driver):
     assert "dashboard/executions" in driver.current_url, "应该跳转到 .dashboard/executions 页面"
 
 # 概览-数据洞察-项目进展
+@pytest.mark.smoke
 def test_button_project_progress(driver):
     login_case(driver)
     driver.get("http://localhost:5173/dashboard")
@@ -158,11 +168,56 @@ def test_button_project_progress(driver):
         except:
             print(f"第{i}个项目没有展开内容")
 
+# 项目-输入框
+@pytest.mark.smoke
+def test_input_project(driver):
+    login_case(driver)
+    driver.get("http://localhost:5173/dashboard/projects")
 
+    wait = WebDriverWait(driver, 10)
 
-if __name__ == "__main__":
-    import pytest
-    pytest.main(["-v", "auto.py::test_login"])
-    pytest.main(["-v", "auto.py::test_button_refresh"])
-    pytest.main(["-v", "auto.py::test_button_projects"])
-    pytest.main(["-v", "auto.py::test_button_project_progress"])
+    # 查找输入框并输入内容
+    project_input = wait.until(
+        # visibility_of_element_located: 等待元素可见（不仅存在于 DOM 中，还要在页面上可见）
+        # presence_of_element_located: 只等待元素存在于 DOM 中，不要求可见
+        EC.presence_of_element_located((By.CLASS_NAME, "search-input"))
+    )
+    project_input.clear()
+    project_input.send_keys("Test Project Final")
+    # pause(6)
+
+    # 等待加载
+    try:
+        projects_list = wait.until(EC.presence_of_element_located((By.CLASS_NAME, "projects-grid")))
+        assert projects_list.is_displayed(), "输入后应该显示对应项目列表"
+    except:
+        print("项目不存在")
+
+# 项目-点击卡片查看项目的详情
+def test_button_projects_details(driver):
+    login_case(driver)
+    driver.get("http://localhost:5173/dashboard/projects")
+
+    wait = WebDriverWait(driver, 10)
+
+    wait.until(EC.presence_of_element_located((By.CLASS_NAME, "projects-grid")))
+    all_projects = driver.find_elements(By.CLASS_NAME, "projects-grid")
+
+    for i in range(len(all_projects)):
+        all_projects = driver.find_elements(By.CLASS_NAME, "projects-grid")
+
+        all_projects[i].find_element(By.CLASS_NAME, "detail-modal").click()
+        # pause(2)
+
+        try:
+            projects_details_page = wait.until(
+                EC.visibility_of(
+                    all_projects[i].find_element(By.CLASS_NAME, "detail-modal")
+                )
+            )
+            assert projects_details_page.is_displayed(), "点击项目卡片后应该显示项目详情页面"
+        except:
+            print(f"第{i}个项目没有详情页面")
+        # 关闭详情页面
+        all_projects[i].find_element(By.CLASS_NAME, "btn-close").click()
+
