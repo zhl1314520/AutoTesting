@@ -112,6 +112,9 @@ def test_button_projects(driver):
 
     wait = WebDriverWait(driver, 10)
 
+    wait.until( # 等待所有卡片加载完成
+        EC.presence_of_all_elements_located((By.CLASS_NAME, "insight-card"))
+    )
     # find_element: 只能找到一个元素，find_elements: 可以找到多个元素，返回一个列表
     insight_cards = driver.find_elements(By.CLASS_NAME, "insight-card")
     insight_cards[0].click()  # 项目卡片
@@ -156,7 +159,7 @@ def test_button_project_progress(driver):
 
         all_projects[i].find_element(By.CLASS_NAME, "project-info").click()
         # pause(2)
-
+        print()
         # 防止项目没有展开内容，导致后续查找失败（TimeoutException）
         try:
             modules_list = wait.until(
@@ -194,30 +197,36 @@ def test_input_project(driver):
         print("项目不存在")
 
 # 项目-点击卡片查看项目的详情
+@pytest.mark.smoke
 def test_button_projects_details(driver):
     login_case(driver)
     driver.get("http://localhost:5173/dashboard/projects")
 
     wait = WebDriverWait(driver, 10)
 
+    # 等待加载列表容器 gird
     wait.until(EC.presence_of_element_located((By.CLASS_NAME, "projects-grid")))
-    all_projects = driver.find_elements(By.CLASS_NAME, "projects-grid")
+    all_projects = driver.find_elements(By.CLASS_NAME, "project-card")
 
     for i in range(len(all_projects)):
-        all_projects = driver.find_elements(By.CLASS_NAME, "projects-grid")
+        all_projects = driver.find_elements(By.CLASS_NAME, "project-card")
 
-        all_projects[i].find_element(By.CLASS_NAME, "detail-modal").click()
+        all_projects[i].click()
         # pause(2)
 
         try:
             projects_details_page = wait.until(
-                EC.visibility_of(
-                    all_projects[i].find_element(By.CLASS_NAME, "detail-modal")
-                )
+                EC.visibility_of_element_located((By.CLASS_NAME, "detail-modal"))
             )
             assert projects_details_page.is_displayed(), "点击项目卡片后应该显示项目详情页面"
         except:
             print(f"第{i}个项目没有详情页面")
+            continue  # 没有详情页就跳过，不要执行关闭操作
         # 关闭详情页面
-        all_projects[i].find_element(By.CLASS_NAME, "btn-close").click()
+        projects_details_page.find_element(By.CLASS_NAME, "btn-close").click()
+
+        # 等待弹窗关闭，避免影响下一个卡片点击
+        wait.until(
+            lambda d: len(d.find_elements(By.CLASS_NAME, "modal-footer")) == 0 # 强制等待所有 modal-footer 元素消失，说明弹窗已经关闭
+        )
 
