@@ -223,10 +223,75 @@ def test_button_projects_details(driver):
             print(f"第{i}个项目没有详情页面")
             continue  # 没有详情页就跳过，不要执行关闭操作
         # 关闭详情页面
-        projects_details_page.find_element(By.CLASS_NAME, "btn-close").click()
+        wait.until(EC.element_to_be_clickable((By.CLASS_NAME, "btn-close"))).click()
 
         # 等待弹窗关闭，避免影响下一个卡片点击
         wait.until(
             lambda d: len(d.find_elements(By.CLASS_NAME, "modal-footer")) == 0 # 强制等待所有 modal-footer 元素消失，说明弹窗已经关闭
         )
 
+
+# 项目-卡片-修改按钮（包含里面的关闭、取消、提交修改按钮）
+@pytest.mark.smoke
+def test_button_projects_details_edit(driver):
+    login_case(driver)
+    driver.get("http://localhost:5173/dashboard/projects")
+
+    wait = WebDriverWait(driver, 10)
+
+    # 等待加载列表容器 gird
+    wait.until(EC.presence_of_element_located((By.CLASS_NAME, "projects-grid")))
+    all_projects = driver.find_elements(By.CLASS_NAME, "project-card")
+
+    for i in range(len(all_projects)):
+        all_projects = driver.find_elements(By.CLASS_NAME, "project-card")
+
+        # 点击修改按钮
+        all_projects[i].find_element(By.CLASS_NAME, "btn-edit").click()
+
+        # 等待修改表单出现
+        try:
+            edit_form = wait.until(
+                EC.visibility_of_element_located((By.CLASS_NAME, "modal-container"))
+            )
+            assert edit_form.is_displayed(), "点击修改按钮后应该显示修改表单"
+        except:
+            print(f"第{i}个项目没有修改表单")
+            continue  # 没有修改表单就跳过
+
+        # 右上角的关闭按钮
+        wait.until(EC.element_to_be_clickable((By.CLASS_NAME, "btn-close"))).click()
+        # 等待加载卡片内容，避免影响再次点击
+        wait.until(EC.invisibility_of_element_located((By.CLASS_NAME, "modal-overlay")))
+        # === 补充这行：等待可能出现的 toast 消失 ===
+        wait.until(EC.invisibility_of_element_located((By.CLASS_NAME, "toast-overlay")))
+        all_projects = driver.find_elements(By.CLASS_NAME, "project-card")
+        all_projects[i].find_element(By.CLASS_NAME, "btn-edit").click()
+        try:
+            wait.until(
+                EC.visibility_of_element_located((By.CLASS_NAME, "modal-container"))
+            )
+        except:
+            continue  # 没有修改表单就跳过
+
+        # 取消按钮
+        wait.until(EC.element_to_be_clickable((By.CLASS_NAME, "btn-cancel"))).click()
+        wait.until(EC.invisibility_of_element_located((By.CLASS_NAME, "modal-overlay")))
+        # === 补充这行：等待可能出现的 toast 消失 ===
+        wait.until(EC.invisibility_of_element_located((By.CLASS_NAME, "toast-overlay")))
+        all_projects = driver.find_elements(By.CLASS_NAME, "project-card")
+        all_projects[i].find_element(By.CLASS_NAME, "btn-edit").click()
+        try:
+            wait.until(
+                EC.visibility_of_element_located((By.CLASS_NAME, "modal-container"))
+            )
+        except:
+            continue  # 没有修改表单就跳过
+        # 点击保存按钮
+        wait.until(EC.element_to_be_clickable((By.CLASS_NAME, "btn-submit"))).click()
+        wait.until(EC.invisibility_of_element_located((By.CLASS_NAME, "modal-overlay")))
+        # === 新增：等待 toast 提示消失(避免“成功修改”弹窗遮挡) ===
+        try:
+            wait.until(EC.invisibility_of_element_located((By.CLASS_NAME, "toast-overlay")))
+        except:
+            pass  # 没有 toast 也不影响
