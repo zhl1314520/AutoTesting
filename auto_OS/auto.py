@@ -91,18 +91,19 @@ def test_button_refresh(driver):
 
     wait = WebDriverWait(driver, 10)
 
+    # 使用 EC.element_to_be_clickable 确保按钮已经加载完毕且可被点击
     refresh_btn = wait.until(
-        lambda d: d.find_element(By.CLASS_NAME, "refresh-btn")
+        EC.element_to_be_clickable((By.CLASS_NAME, "refresh-btn"))
     )
 
     refresh_btn.click()
 
-    # 等待动画状态变化（如果是异步刷新）
+    # 动态重新查找元素并获取属性，防止抛出 StaleElementReferenceException；并加入 or "" 防止 get_attribute 返回 None 时执行 in 抛出 TypeError 报错
     wait.until(
-        lambda d: "spinning" in refresh_btn.get_attribute("class")
+        lambda d: "spinning" in (d.find_element(By.CLASS_NAME, "refresh-btn").get_attribute("class") or "")
     )
 
-    assert "spinning" in refresh_btn.get_attribute("class"), "应显示刷新动画"
+    assert "spinning" in (driver.find_element(By.CLASS_NAME, "refresh-btn").get_attribute("class") or ""), "应显示刷新动画"
 
 # 概览-数据洞察-卡片按钮
 @pytest.mark.smoke
@@ -225,6 +226,18 @@ def test_button_projects_details(driver):
         # 关闭详情页面
         wait.until(EC.element_to_be_clickable((By.CLASS_NAME, "btn-close"))).click()
 
+        # 等待加载卡片内容，避免影响再次点击
+        wait.until(EC.invisibility_of_element_located((By.CLASS_NAME, "modal-overlay")))
+        # === 补充这行：等待可能出现的 toast 消失 ===
+        wait.until(EC.invisibility_of_element_located((By.CLASS_NAME, "toast-overlay")))
+        all_projects = driver.find_elements(By.CLASS_NAME, "project-card")
+        all_projects[i].find_element(By.CLASS_NAME, "btn-edit").click()
+        try:
+            wait.until(
+                EC.visibility_of_element_located((By.CLASS_NAME, "modal-container"))
+            )
+        except:
+            continue  # 没有修改表单就跳过
         # 等待弹窗关闭，避免影响下一个卡片点击
         wait.until(
             lambda d: len(d.find_elements(By.CLASS_NAME, "modal-footer")) == 0 # 强制等待所有 modal-footer 元素消失，说明弹窗已经关闭
