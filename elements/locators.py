@@ -35,7 +35,7 @@ def driver():
 # =====================
 # 公共 URL
 # =====================
-URL = "file:///D:/Desktop/4.html"
+URL = "http://localhost:63342/AutoTesting/elements/locators.html?_ijt=s0nhdk8njquh44t8847odobm2j&_ij_reload=RELOAD_ON_SAVE"
 
 
 # =====================

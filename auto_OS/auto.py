@@ -53,7 +53,6 @@ def login_case(driver):
     wait.until(lambda d: "dashboard" in d.current_url)
 
 
-
 @pytest.mark.parametrize(
     "email,password", [
     ("17201665342@163.com", "123456"),  # right account

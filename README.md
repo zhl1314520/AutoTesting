@@ -23,7 +23,8 @@ A collection of automated testing project examples based on Python and Selenium 
 This project is clearly categorized according to the core functional modules of Selenium, including the following key directories:
 
 - **`actions_API/`**: Advanced interaction APIs (ActionChains), including complex interaction demonstrations related to keyboard (`keyboard.py`), mouse (`mouse.py`), pen (`pen.py`), and wheel (`wheel.py`).
-- **`bidi/`**: BiDi (Bidirectional communication) and CDP support introduced in Selenium 4, including advanced features such as log listening (`logging.py`), network interception (`network.py`), and script injection (`script.py`).
+- **`auto_OS/`**: Practical automation test cases for specific application scenarios, such as Dashboard login, data insights, and project management (`auto.py`).
+- **`bidi/`**: BiDi (Bidirectional communication) and CDP support introduced in Selenium 4, including advanced features such as log listening, network interception, and script injection (see `CDP/` subfolder).
 - **`drivers/`**: Browser driver management and configuration, including custom options (`options.py`), HTTP client configuration (`HTTP_client.py`), and remote control (`remote_webdriver.py`).
 - **`elements/`**: Element location and operation, including various selectors (`locators.py`), file upload (`file_upload.py`), and element status information retrieval (`information.py`).
 - **`getting-started/`**: Beginner examples, including your first Selenium script (`first_script.py`) and basic usage (`using_selenium.py`).
@@ -86,7 +87,8 @@ pytest
 本项目按照 Selenium 的核心功能模块进行了清晰的分类，包含以下关键目录：
 
 - **`actions_API/`**: 高级交互 API（ActionChains），包含键盘 (`keyboard.py`)、鼠标 (`mouse.py`)、触控笔 (`pen.py`) 及滚轮 (`wheel.py`) 相关的复杂交互演示。
-- **`bidi/`**: Selenium 4 引入的 BiDi（双向通信）及 CDP 支持，包含日志监听 (`logging.py`)、网络拦截 (`network.py`) 和脚本注入 (`script.py`) 等高级特性。
+- **`auto_OS/`**: 针对具体应用场景的自动化测试实战，包含 Dashboard 登录、数据洞察、项目管理等用例 (`auto.py`)。
+- **`bidi/`**: Selenium 4 引入的 BiDi（双向通信）及 CDP 支持，包含日志监听、网络拦截和脚本注入等高级特性（详见 `CDP/` 子目录）。
 - **`drivers/`**: 浏览器驱动管理与配置，包含自定义选项 (`options.py`)、HTTP客户端配置 (`HTTP_client.py`) 及远程控制 (`remote_webdriver.py`)。
 - **`elements/`**: 元素定位与操作，包含各类选择器 (`locators.py`)、文件上传 (`file_upload.py`) 以及元素状态信息获取 (`information.py`)。
 - **`getting-started/`**: 新手入门示例，包含你的第一个 Selenium 脚本 (`first_script.py`) 和基础用法 (`using_selenium.py`)。
