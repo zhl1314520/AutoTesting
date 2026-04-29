@@ -1,7 +1,7 @@
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
-class BasePage:
+class BasePage:     # 所有继承 BasePage 的都带有显式等待
 
     # 大量使用 self：每个页面类实例都有自己的 wait 对象（login_page, dashboard_page 等）
 
